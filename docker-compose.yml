@@ -1,7 +1,7 @@
 version: '3.1'
 
 services:
-  deploy-or-not:
+  should-i-deploy:
     build: .
     restart: always
     ports:
