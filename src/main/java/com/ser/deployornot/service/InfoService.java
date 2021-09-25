@@ -4,11 +4,11 @@ import com.ser.deployornot.entity.DownloadInfoRecord;
 import com.ser.deployornot.entity.DownloadInfoRepository;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.http.HttpHeaders;
 import org.springframework.lang.NonNull;
 import org.springframework.lang.Nullable;
 import org.springframework.stereotype.Service;
 
+import javax.servlet.http.HttpServletRequest;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.time.Clock;
@@ -24,9 +24,9 @@ public class InfoService {
     private final GeoIpService geoIpService;
     private final DownloadInfoRepository downloadInfoRepository;
 
-    public void registerDownloading(@NonNull String fileName, @NonNull HttpHeaders httpHeaders) {
-        String ipAddress = findIpAddress(httpHeaders);
-        String browser = findBrowser(httpHeaders);
+    public void registerDownloading(@NonNull String fileName, @NonNull HttpServletRequest request) {
+        String ipAddress = findIpAddress(request);
+        String browser = findBrowser(request);
 
         var downloadInfoRecord = new DownloadInfoRecord()
                 .setFileName(fileName)
@@ -45,18 +45,14 @@ public class InfoService {
     }
 
     @Nullable
-    private String findIpAddress(@NonNull HttpHeaders httpHeaders) {
-        return ofNullable(httpHeaders.get("X-Forwarded-For"))
-                .map(ipAddressList -> ipAddressList.get(0))
-                .orElseGet(() -> ofNullable(httpHeaders.get("Host"))
-                        .map(hosts -> hosts.get(0))
-                        .orElse(null));
+    private String findIpAddress(@NonNull HttpServletRequest request) {
+        return ofNullable(request.getHeader("X-Forwarded-For"))
+                .map(ipAddressList -> ipAddressList.split(",")[0])
+                .orElseGet(request::getRemoteAddr);
     }
 
     @Nullable
-    private String findBrowser(@NonNull HttpHeaders httpHeaders) {
-        return ofNullable(httpHeaders.get("User-Agent"))
-                .map(ipAddressList -> ipAddressList.get(0))
-                .orElse(null);
+    private String findBrowser(@NonNull HttpServletRequest request) {
+        return request.getHeader("User-Agent");
     }
 }
