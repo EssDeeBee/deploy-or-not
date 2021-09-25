@@ -1,12 +1,12 @@
 plugins {
-    id 'org.springframework.boot' version '2.4.2'
+    id 'org.springframework.boot' version '2.5.5'
     id 'io.spring.dependency-management' version '1.0.11.RELEASE'
     id 'java'
 }
 
 group = 'com.ser'
-version = '0.0.1-SNAPSHOT'
-sourceCompatibility = '11'
+version = '1-SNAPSHOT'
+sourceCompatibility = '17'
 
 configurations {
     compileOnly {
@@ -20,13 +20,19 @@ repositories {
 
 dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-webflux'
+    implementation 'org.springframework.boot:spring-boot-starter-web'
+    implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
+    implementation group: 'org.jsoup', name: 'jsoup', version: '1.13.1'
+    implementation 'org.flywaydb:flyway-core'
+    implementation 'com.maxmind.geoip2:geoip2:2.15.0'
+
+    runtimeOnly 'org.postgresql:postgresql'
     compileOnly 'org.projectlombok:lombok'
     annotationProcessor 'org.projectlombok:lombok'
+
+    testImplementation 'org.springframework.boot:spring-boot-starter-test'
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
     testImplementation 'io.projectreactor:reactor-test'
-
-    // https://mvnrepository.com/artifact/org.jsoup/jsoup
-    implementation group: 'org.jsoup', name: 'jsoup', version: '1.13.1'
 
 }
 
